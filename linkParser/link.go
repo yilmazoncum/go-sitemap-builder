@@ -1,5 +1,7 @@
 package link
 
+// html link parser
+
 import (
 	"io"
 	"strings"
