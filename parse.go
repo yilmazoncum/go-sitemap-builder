@@ -13,15 +13,33 @@ type Link struct {
 }
 
 func Parse(r io.Reader) ([]Link, error) {
+
 	doc, error := html.Parse(r)
 	if error != nil {
 		return nil, error
 	}
-	dfs(doc, "")
+
+	nodes := LinkNodes(doc)
+	for _, node := range nodes {
+		fmt.Println(node)
+	}
+
+	//dfs(doc, "")
 	return nil, nil
 }
 
-func dfs(n *html.Node, padding string) {
+func LinkNodes(n *html.Node) []*html.Node {
+	if n.Type == html.ElementNode && n.Data == "a" {
+		return []*html.Node{n}
+	}
+	var ret []*html.Node
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		ret = append(ret, LinkNodes(c)...)
+	}
+	return ret
+}
+
+/* func dfs(n *html.Node, padding string) {
 	msg := n.Data
 	if n.Type == html.ElementNode {
 		msg = "<" + msg + ">"
@@ -30,4 +48,4 @@ func dfs(n *html.Node, padding string) {
 	for c := n.FirstChild; c != nil; c = c.NextSibling {
 		dfs(c, padding+" ")
 	}
-}
+} */
